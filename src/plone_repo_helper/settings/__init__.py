@@ -11,7 +11,7 @@ def get_settings() -> t.RepositorySettings:
         name = raw_settings.repository.name
     except AttributeError:
         raise RuntimeError() from None
-    is_distribution = bool(raw_settings.repository.get("is_distribution", False))
+    managed_by_uv = bool(raw_settings.repository.get("managed_by_uv", False))
     root_changelog = root_path / raw_settings.repository.changelog
     version_path = root_path / raw_settings.repository.version
     compose_path = root_path / raw_settings.repository.compose
@@ -21,7 +21,7 @@ def get_settings() -> t.RepositorySettings:
     changelogs = utils.get_changelogs(root_changelog, backend, frontend)
     return t.RepositorySettings(
         name=name,
-        is_distribution=is_distribution,
+        managed_by_uv=managed_by_uv,
         root_path=root_path,
         backend=backend,
         frontend=frontend,

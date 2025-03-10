@@ -51,7 +51,7 @@ class RepositorySettings:
     """Settings for a distribution."""
 
     name: str
-    is_distribution: bool
+    managed_by_uv: bool
     root_path: Path
     backend: Package
     frontend: Package
@@ -61,15 +61,17 @@ class RepositorySettings:
     changelogs: Changelogs
 
     def sanity(self) -> bool:
-        return all([
-            self.root_path.exists(),
-            self.backend.sanity(),
-            self.frontend.sanity(),
-            self.version_path.exists(),
-            self.compose_path.exists(),
-            self.towncrier.sanity(),
-            self.changelogs.sanity(),
-        ])
+        return all(
+            [
+                self.root_path.exists(),
+                self.backend.sanity(),
+                self.frontend.sanity(),
+                self.version_path.exists(),
+                self.compose_path.exists(),
+                self.towncrier.sanity(),
+                self.changelogs.sanity(),
+            ]
+        )
 
 
 @dataclass

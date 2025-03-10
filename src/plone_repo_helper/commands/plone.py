@@ -14,8 +14,8 @@ app = typer.Typer()
 def check(ctx: typer.Context):
     """Check latest version of Products.CMFPlone and compare to our current pinning."""
     settings: t.RepositorySettings = ctx.obj.settings
-    if not settings.is_distribution:
-        typer.echo("Only available for distributions based on Products.CMFPlone.")
+    if not settings.managed_by_uv:
+        typer.echo("Only available for installations managed by uv.")
         raise typer.Exit(1)
     pyproject = utils.get_pyproject(settings)
     current = dependencies.current_plone(pyproject) if pyproject else None
@@ -32,9 +32,9 @@ def upgrade(
     version: Annotated[str, typer.Argument(help="New version of Products.CMFPlone")],
 ):
     """Upgrade Products.CMFPlone to a newer version."""
-    settings = ctx.obj.settings
-    if not settings.is_distribution:
-        typer.echo("Only available for distributions based on Products.CMFPlone.")
+    settings: t.RepositorySettings = ctx.obj.settings
+    if not settings.managed_by_uv:
+        typer.echo("Only available for installations managed by uv.")
         raise typer.Exit(1)
     logger.info(f"Getting Plone constraints for version {version}")
     constraints = dependencies.get_plone_constraints(version)
