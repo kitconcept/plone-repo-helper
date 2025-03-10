@@ -49,3 +49,16 @@ def do(
     logger.info(f"Creating tag {version}")
     gitutils.finish_release(repo, version)
     logger.info(f"Release {version} complete")
+
+
+@app.command()
+def changelog(
+    ctx: typer.Context,
+):
+    """Generate a draft of the final changelog."""
+    settings = ctx.obj.settings
+    backend_path = settings.backend.path
+    version = vutils.get_current_backend_version(backend_path)
+    # Changelog
+    changelog = chgutils.update_changelog(settings, draft=True, version=version)
+    logger.info(f"{'=' * 50}\n{changelog}\n{'=' * 50}")

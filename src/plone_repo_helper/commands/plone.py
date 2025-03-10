@@ -1,3 +1,4 @@
+from plone_repo_helper import _types as t
 from plone_repo_helper import logger
 from plone_repo_helper import utils
 from plone_repo_helper.utils import dependencies
@@ -11,8 +12,11 @@ app = typer.Typer()
 
 @app.command()
 def check(ctx: typer.Context):
-    """Upgrade Products.CMFPlone to a newer version."""
-    settings = ctx.obj.settings
+    """Check latest version of Products.CMFPlone and compare to our current pinning."""
+    settings: t.RepositorySettings = ctx.obj.settings
+    if not settings.is_distribution:
+        typer.echo("Only available for distributions based on Products.CMFPlone.")
+        raise typer.Exit(1)
     pyproject = utils.get_pyproject(settings)
     current = dependencies.current_plone(pyproject) if pyproject else None
     if not current:
@@ -29,6 +33,9 @@ def upgrade(
 ):
     """Upgrade Products.CMFPlone to a newer version."""
     settings = ctx.obj.settings
+    if not settings.is_distribution:
+        typer.echo("Only available for distributions based on Products.CMFPlone.")
+        raise typer.Exit(1)
     logger.info(f"Getting Plone constraints for version {version}")
     constraints = dependencies.get_plone_constraints(version)
     pyproject = utils.get_pyproject(settings)
