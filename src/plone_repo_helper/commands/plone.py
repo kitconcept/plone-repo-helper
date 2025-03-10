@@ -42,6 +42,10 @@ def upgrade(
     if pyproject:
         logger.info(f"Updating {pyproject} dependencies and constraints")
         dependencies.update_pyproject(pyproject, version, constraints)
+        # Update versions.txt
+        backend_path = settings.backend.path
+        version_file = (backend_path / "version.txt").resolve()
+        version_file.write_text(f"{version}\n")
         logger.info("Done")
     else:
         logger.info("No pyproject.toml found")
