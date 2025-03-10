@@ -61,17 +61,16 @@ class RepositorySettings:
     changelogs: Changelogs
 
     def sanity(self) -> bool:
-        return all(
-            [
-                self.root_path.exists(),
-                self.backend.sanity(),
-                self.frontend.sanity(),
-                self.version_path.exists(),
-                self.compose_path.exists(),
-                self.towncrier.sanity(),
-                self.changelogs.sanity(),
-            ]
-        )
+        steps = [
+            self.root_path.exists(),
+            self.backend.sanity(),
+            self.frontend.sanity(),
+            self.version_path.exists(),
+            self.compose_path.exists(),
+            self.towncrier.sanity(),
+            self.changelogs.sanity(),
+        ]
+        return all(steps)
 
 
 @dataclass
