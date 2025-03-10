@@ -8,12 +8,12 @@ def get_settings() -> t.RepositorySettings:
     """Return base settings."""
     root_path = get_root_path()
     try:
-        name = raw_settings.distribution.name
+        name = raw_settings.repository.name
     except AttributeError:
         raise RuntimeError() from None
-    root_changelog = root_path / raw_settings.distribution.changelog
-    version_path = root_path / raw_settings.distribution.version
-    compose_path = root_path / raw_settings.distribution.compose
+    root_changelog = root_path / raw_settings.repository.changelog
+    version_path = root_path / raw_settings.repository.version
+    compose_path = root_path / raw_settings.repository.compose
     backend = utils.get_backend(root_path, raw_settings)
     frontend = utils.get_frontend(root_path, raw_settings)
     towncrier = utils.get_towncrier_settings(backend, frontend)

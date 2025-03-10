@@ -1,4 +1,4 @@
-[distribution]
+[repository]
 name = "fake-distribution"
 changelog = "CHANGELOG.md"
 version = "version.txt"
