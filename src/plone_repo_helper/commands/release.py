@@ -44,7 +44,7 @@ def do(
     utils.release_backend(settings, version, dry_run)
     # Release frontend
     utils.release_frontend(settings, version, dry_run)
-    Commit changes, create tag
+    # Commit changes, create tag
     repo = gitutils.repo_for_project(settings.root_path)
     logger.info(f"Creating tag {version}")
     gitutils.finish_release(repo, version)
