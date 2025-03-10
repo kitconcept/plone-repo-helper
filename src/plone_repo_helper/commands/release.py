@@ -17,7 +17,7 @@ def do(
     option: Annotated[
         str, typer.Argument(help="Which release type. a, minor, major, rc")
     ],
-    dry_run: Annotated[bool, typer.Argument(help="Is this a dry run?")],
+    dry_run: Annotated[bool, typer.Argument(help="Is this a dry run?")] = False,
 ):
     """Release the packages in this mono repo."""
     settings = ctx.obj.settings
@@ -44,7 +44,7 @@ def do(
     utils.release_backend(settings, version, dry_run)
     # Release frontend
     utils.release_frontend(settings, version, dry_run)
-    # Commit changes, create tag
+    Commit changes, create tag
     repo = gitutils.repo_for_project(settings.root_path)
     logger.info(f"Creating tag {version}")
     gitutils.finish_release(repo, version)

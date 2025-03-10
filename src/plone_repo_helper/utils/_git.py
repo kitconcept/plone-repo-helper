@@ -47,13 +47,13 @@ def create_version_tag(repo: Repo, version: str, message: str) -> Tag:
     # Create tag
     tag = repo.create_tag(version, message=message)
     # Push tag
-    push_changes(tag)
+    push_changes(repo, tag)
     return tag
 
 
-def finish_release(repo: Repo, version: str):
+def finish_release(repo: Repo, version: str) -> Tag:
     message = f"Release {version}"
     commit_pending_changes(repo, message)
     tag = create_version_tag(repo, version, message)
-    push_changes(repo, tag)
     push_changes(repo)
+    return tag
