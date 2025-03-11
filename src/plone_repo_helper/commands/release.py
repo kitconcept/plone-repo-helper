@@ -41,9 +41,11 @@ def do(
     compose_file.write_text(contents)
     logger.info(f"Updated {compose_file} file")
     # Changelog
-    changelog = chgutils.update_changelog(settings, draft=dry_run, version=next_version)
+    new_entries, _ = chgutils.update_changelog(
+        settings, draft=dry_run, version=next_version
+    )
     if dry_run:
-        logger.info(f"{'=' * 50}\n{changelog}\n{'=' * 50}")
+        logger.info(f"{'=' * 50}\n{new_entries}\n{'=' * 50}")
     else:
         logger.info(f"Updated {settings.changelogs.root} file")
     # Release backend
@@ -66,5 +68,5 @@ def changelog(
     backend_path = settings.backend.path
     version = vutils.get_current_backend_version(backend_path)
     # Changelog
-    changelog = chgutils.update_changelog(settings, draft=True, version=version)
-    logger.info(f"{'=' * 50}\n{changelog}\n{'=' * 50}")
+    new_entries, _ = chgutils.update_changelog(settings, draft=True, version=version)
+    logger.info(f"{'=' * 50}\n{new_entries}\n{'=' * 50}")

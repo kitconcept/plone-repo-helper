@@ -62,7 +62,7 @@ def _update_project_changelog(
     sections: dict[str, str],
     draft: bool = True,
     version: str = "",
-) -> str:
+) -> tuple[str, str]:
     root_changelog = settings.changelogs.root
     changelog_text = root_changelog.read_text()
     header = f"## {version} ({datetime.now():%Y-%m-%d})"
@@ -75,7 +75,7 @@ def _update_project_changelog(
     )
     if not draft:
         root_changelog.write_text(text)
-    return text
+    return new_entry, text
 
 
 def update_backend_changelog(
@@ -90,7 +90,7 @@ def update_backend_changelog(
 
 def update_changelog(
     settings: t.RepositorySettings, draft: bool = True, version: str = ""
-) -> str:
+) -> tuple[str, str]:
     if draft and not version:
         version = utils.get_next_version(settings)
     sections = generate_section_changelogs(settings=settings, version=version)
