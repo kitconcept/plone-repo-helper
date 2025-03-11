@@ -37,6 +37,7 @@ def _run_towncrier(config: Path, name: str, version: str, draft: bool = True) ->
         "--version",
         version,
         "--draft" if draft else "",
+        "--keep" if draft else "",
     ]
     with change_cwd(cwd):
         result = runner.invoke(towncrier_app, args)

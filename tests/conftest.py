@@ -70,3 +70,10 @@ def vcr_config():
 @pytest.fixture(scope="session")
 def vcr_cassette_dir(request):
     return str(RESOURCES / "vcr")
+
+
+@pytest.fixture
+def settings(test_project):
+    from plone_repo_helper import settings
+
+    return settings.get_settings()

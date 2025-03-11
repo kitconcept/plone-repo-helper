@@ -10,6 +10,7 @@ import pytest
     [
         ["name", str],
         ["root_path", Path],
+        ["version", str],
         ["backend", t.Package],
         ["frontend", t.Package],
         ["version_path", Path],

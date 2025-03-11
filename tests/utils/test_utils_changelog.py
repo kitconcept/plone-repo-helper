@@ -21,10 +21,11 @@ def settings(test_project):
 )
 def test_update_changelog_draft(settings, bust_path_cache, version: str):
     func = changelog.update_changelog
-    result = func(settings=settings, draft=True, version=version)
-    assert f"## {version} (" in result
-    assert "### Backend" in result
-    assert "### Frontend" in result
+    new_entries, fullchangelog = func(settings=settings, draft=True, version=version)
+    assert f"## {version} (" in fullchangelog
+    assert f"## {version} (" in new_entries
+    assert "### Backend" in new_entries
+    assert "### Frontend" in new_entries
 
 
 @pytest.mark.parametrize(
@@ -39,10 +40,11 @@ def test_update_changelog_draft(settings, bust_path_cache, version: str):
 def test_update_changelog(settings, bust_path_cache, version: str):
     old_project_changelog = settings.changelogs.root.read_text()
     func = changelog.update_changelog
-    result = func(settings=settings, draft=False, version=version)
+    new_entries, _ = func(settings=settings, draft=False, version=version)
     new_project_changelog = settings.changelogs.root.read_text()
     assert old_project_changelog != new_project_changelog
-    assert result == new_project_changelog
+    assert new_entries in new_project_changelog
     assert f"## {version} (" in new_project_changelog
-    assert "### Backend" in new_project_changelog
-    assert "### Frontend" in new_project_changelog
+    assert f"## {version} (" in new_entries
+    assert "### Backend" in new_entries
+    assert "### Frontend" in new_entries

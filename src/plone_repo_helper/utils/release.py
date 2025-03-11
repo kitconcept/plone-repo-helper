@@ -1,3 +1,5 @@
+from ._git import repo_for_project
+from ._git import repo_has_version
 from ._hatch import get_hatch
 from ._path import change_cwd
 from .changelog import update_backend_changelog
@@ -41,3 +43,12 @@ def release_frontend(settings: t.RepositorySettings, version: str, dry_run: bool
     )
     if result.returncode:
         raise RuntimeError(f"Frontend release failed {result.stderr}")
+
+
+def valid_next_version(settings: t.RepositorySettings, next_version: str) -> bool:
+    """Check if next version is valid."""
+    is_valid = True
+    repo = repo_for_project(settings.root_path)
+    if repo:
+        is_valid = not (repo_has_version(repo, next_version))
+    return is_valid

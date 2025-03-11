@@ -1,8 +1,10 @@
+from plone_repo_helper import __version__
 from plone_repo_helper import _types as t
 from plone_repo_helper.commands.plone import app as app_plone
 from plone_repo_helper.commands.release import app as app_release
 from plone_repo_helper.commands.version import app as app_version
 from plone_repo_helper.settings import get_settings
+from typing import Annotated
 
 import typer
 
@@ -11,13 +13,20 @@ app = typer.Typer(no_args_is_help=True)
 
 
 @app.callback(invoke_without_command=True)
-def main(ctx: typer.Context):
+def main(
+    ctx: typer.Context,
+    version: Annotated[
+        bool, typer.Option(help="Report the version of this app.")
+    ] = False,
+):
     """Welcome to Plone Distribution Helper."""
     try:
         settings = get_settings()
     except RuntimeError:
         typer.echo("Not running inside a mono repo.")
         raise typer.Exit() from None
+    if version:
+        typer.echo(f"plone_repo_helper {__version__}")
     else:
         ctx_obj = t.CTLContextObject(settings=settings)
         ctx.obj = ctx_obj

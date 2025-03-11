@@ -14,6 +14,7 @@ def get_settings() -> t.RepositorySettings:
     managed_by_uv = bool(raw_settings.repository.get("managed_by_uv", False))
     root_changelog = root_path / raw_settings.repository.changelog
     version_path = root_path / raw_settings.repository.version
+    version = version_path.read_text().strip()
     compose_path = root_path / raw_settings.repository.compose
     backend = utils.get_backend(root_path, raw_settings)
     frontend = utils.get_frontend(root_path, raw_settings)
@@ -23,6 +24,7 @@ def get_settings() -> t.RepositorySettings:
         name=name,
         managed_by_uv=managed_by_uv,
         root_path=root_path,
+        version=version,
         backend=backend,
         frontend=frontend,
         version_path=version_path,

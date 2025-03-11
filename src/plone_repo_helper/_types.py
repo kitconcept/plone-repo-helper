@@ -22,6 +22,7 @@ class Package:
     path: Path
     changelog: Path
     towncrier: Path
+    version: str = ""
 
     def sanity(self) -> bool:
         return (
@@ -53,6 +54,7 @@ class RepositorySettings:
     name: str
     managed_by_uv: bool
     root_path: Path
+    version: str
     backend: Package
     frontend: Package
     version_path: Path

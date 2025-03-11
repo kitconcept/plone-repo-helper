@@ -1,8 +1,11 @@
 from ._hatch import get_hatch
 from ._path import change_cwd
+from hatchling.version.scheme import standard
 from packaging.version import Version as PyPIVersion
 from pathlib import Path
+from plone_repo_helper import _types as t
 
+import json
 import re
 import semver
 
@@ -35,7 +38,13 @@ def convert_python_node_version(version: str) -> str:
     return version
 
 
-def get_current_backend_version(backend_path: Path) -> str:
+def get_repository_version(settings: t.RepositorySettings) -> str:
+    """Return the currect repository version."""
+    version_path = settings.version_path
+    return version_path.read_text().strip()
+
+
+def get_backend_version(backend_path: Path) -> str:
     """Get the current version used by the backend."""
     hatch = get_hatch()
     with change_cwd(backend_path):
@@ -43,14 +52,29 @@ def get_current_backend_version(backend_path: Path) -> str:
     return result.stdout.strip()
 
 
-def update_backend_version(backend_path: Path, version: str) -> str:
-    """Update version used by the backend.
+def get_frontend_version(frontend_package_path: Path) -> str:
+    """Get the current version used by the frontend."""
+    package_json = (frontend_package_path / "package.json").resolve()
+    package_data = json.loads(package_json.read_text())
+    return package_data["version"]
 
-    ref: https://hatch.pypa.io/1.12/version/#updating
-    """
+
+def update_backend_version(backend_path: Path, version: str) -> str:
+    """Update version used by the backend."""
     hatch = get_hatch()
     with change_cwd(backend_path):
         result = hatch("version", version)
     if result.exit_code:
         raise RuntimeError("Error setting backend version")
-    return get_current_backend_version(backend_path)
+    return get_backend_version(backend_path)
+
+
+def next_version(desired_version: str, original_version: str) -> str:
+    """Return the next version for this project.
+
+    desired_version could be either a full version or one of the
+    version segments detailed here: https://hatch.pypa.io/1.12/version/#updating
+    """
+    scheme = standard.StandardScheme("", {})
+    next_version = scheme.update(desired_version, original_version, {})
+    return next_version

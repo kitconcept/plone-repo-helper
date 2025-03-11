@@ -51,6 +51,18 @@ uv run repo_helper
 To check the installed version of the tool, use:
 
 ```bash
+uv run repo_helper --version
+```
+
+## Check repository versions
+
+List current versions for:
+
+- Repository
+- Backend package
+- Frontend package
+
+```bash
 uv run repo_helper version
 ```
 
