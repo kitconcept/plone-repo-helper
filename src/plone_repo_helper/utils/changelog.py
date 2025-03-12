@@ -10,15 +10,19 @@ from towncrier._shell import cli as towncrier_app
 CHANGELOG_PLACEHOLDER = "<!-- towncrier release notes start -->"
 
 
-def _prepare_section_changelog(text: str) -> str:
-    """Prepare section changelog to be added to the project changelog."""
-    # Ignore version header
+def _cleanup_draft(text: str, include_version: bool = False) -> str:
     lines = text.split("\n")
     for idx, line in enumerate(lines):
         if line.startswith("## "):
-            idx += 1
+            idx += 0 if include_version else 1
             break
     text = "\n".join(lines[idx:])
+    return text
+
+
+def _prepare_section_changelog(text: str) -> str:
+    """Prepare section changelog to be added to the project changelog."""
+    text = _cleanup_draft(text)
     # Increase header levels
     text = text.replace("###", "####")
     if not text.strip():
@@ -38,8 +42,9 @@ def _run_towncrier(config: Path, name: str, version: str, draft: bool = True) ->
         f"'{name}'",
         "--version",
         version,
-        "--draft" if draft else "",
     ]
+    if draft:
+        args.append("--draft")
     with change_cwd(cwd):
         result = runner.invoke(towncrier_app, args)
     return result.stdout
@@ -87,6 +92,8 @@ def update_backend_changelog(
     result = _run_towncrier(
         config_path, name=settings.name, version=version, draft=draft
     )
+    if draft:
+        result = _cleanup_draft(result, True)
     return result
 
 

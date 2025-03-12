@@ -48,3 +48,29 @@ def test_update_changelog(settings, bust_path_cache, version: str):
     assert f"## {version} (" in new_entries
     assert "### Backend" in new_entries
     assert "### Frontend" in new_entries
+
+
+@pytest.mark.parametrize(
+    "version,draft",
+    [
+        ["1.0.0a1", True],
+        ["1.0.0b1", True],
+        ["1.0.0rc1", True],
+        ["1.0.0", True],
+        ["1.0.0a1", False],
+        ["1.0.0b1", False],
+        ["1.0.0rc1", False],
+        ["1.0.0", False],
+    ],
+)
+def test_update_backend_changelog(settings, bust_path_cache, version: str, draft: bool):
+    old_changelog = settings.backend.changelog.read_text()
+    func = changelog.update_backend_changelog
+    result = func(settings=settings, draft=draft, version=version)
+    new_changelog = settings.backend.changelog.read_text()
+    if draft:
+        assert old_changelog == new_changelog
+        assert result not in new_changelog
+    else:
+        assert old_changelog != new_changelog
+        assert "Done" in result
