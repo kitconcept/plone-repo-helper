@@ -21,6 +21,8 @@ def _prepare_section_changelog(text: str) -> str:
     text = "\n".join(lines[idx:])
     # Increase header levels
     text = text.replace("###", "####")
+    if not text.strip():
+        text = "\nNo significant changes.\n\n"
     return text
 
 
@@ -37,7 +39,6 @@ def _run_towncrier(config: Path, name: str, version: str, draft: bool = True) ->
         "--version",
         version,
         "--draft" if draft else "",
-        "--keep" if draft else "",
     ]
     with change_cwd(cwd):
         result = runner.invoke(towncrier_app, args)

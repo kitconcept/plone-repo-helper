@@ -152,9 +152,10 @@ def changelog(
     ctx: typer.Context,
 ):
     """Generate a draft of the final changelog."""
-    settings = ctx.obj.settings
-    backend_path = settings.backend.path
-    version = vutils.get_backend_version(backend_path)
+    settings: t.RepositorySettings = ctx.obj.settings
+    original_version = settings.version
     # Changelog
-    new_entries, _ = chgutils.update_changelog(settings, draft=True, version=version)
+    new_entries, _ = chgutils.update_changelog(
+        settings, draft=True, version=original_version
+    )
     typer.echo(f"{'=' * 50}\n{new_entries}\n{'=' * 50}")
