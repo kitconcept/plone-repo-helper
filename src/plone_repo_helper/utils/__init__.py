@@ -49,10 +49,12 @@ def _get_package_info(
     changelog = (root_path / package_settings.changelog).resolve()
     towncrier = (root_path / package_settings.towncrier_settings).resolve()
     version = version_func(path)
+    publish = bool(package_settings.get("publish", True))
     return t.Package(
         name=package_settings.name,
         path=path,
         version=version,
+        publish=publish,
         changelog=changelog,
         towncrier=towncrier,
     )

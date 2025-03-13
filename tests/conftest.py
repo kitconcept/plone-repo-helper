@@ -41,9 +41,18 @@ def update_pyproject():
 
 
 @pytest.fixture
-def test_project(monkeypatch, tmp_path):
+def test_public_project(monkeypatch, tmp_path):
     src = RESOURCES / "fake_distribution"
     dst = tmp_path / "fake_distribution"
+    shutil.copytree(src, dst)
+    monkeypatch.chdir(dst)
+    return dst
+
+
+@pytest.fixture
+def test_internal_project(monkeypatch, tmp_path):
+    src = RESOURCES / "fake-project"
+    dst = tmp_path / "fake-project"
     shutil.copytree(src, dst)
     monkeypatch.chdir(dst)
     return dst
@@ -73,7 +82,25 @@ def vcr_cassette_dir(request):
 
 
 @pytest.fixture
-def settings(test_project):
+def settings(test_public_project):
     from plone_repo_helper import settings
 
     return settings.get_settings()
+
+
+@pytest.fixture
+def initialize_repo():
+    from git import Repo
+    from plone_repo_helper.utils import _git
+
+    def func(path: Path) -> Repo:
+        repo = _git._initialize_repo_for_project(path)
+        # Initial commit
+        git_cmd = repo.git
+        git_cmd.add(".")
+        git_cmd.commit("-m", "Initial commit")
+        # Add a tag
+        _git.create_version_tag(repo, "1.0.0a0", "Release 1.0.0a0")
+        return repo
+
+    return func

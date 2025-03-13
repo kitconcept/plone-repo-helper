@@ -11,6 +11,8 @@ import pytest
         ["1.0.0b1", "1.0.0-beta.1"],
         ["1.0.0rc1", "1.0.0-rc.1"],
         ["1.0.0", "1.0.0"],
+        ["202503.1", "202503.1.0"],
+        ["202512.1", "202512.1.0"],
     ],
 )
 def test_convert_python_node_version(python_version: str, expected: str):
@@ -19,20 +21,20 @@ def test_convert_python_node_version(python_version: str, expected: str):
     assert result == expected
 
 
-def test_repository_version(test_project, bust_path_cache, settings):
+def test_repository_version(test_public_project, bust_path_cache, settings):
     func = versions.get_repository_version
     result = func(settings)
     assert result == "1.0.0a0"
 
 
-def test_get_backend_version(test_project, bust_path_cache):
+def test_get_backend_version(test_public_project, bust_path_cache):
     backend_path = _path.get_root_path() / "backend"
     func = versions.get_backend_version
     result = func(backend_path)
     assert result == "1.0.0a0"
 
 
-def test_get_frontend_version(test_project, bust_path_cache):
+def test_get_frontend_version(test_public_project, bust_path_cache):
     package_path = _path.get_root_path() / "frontend" / "packages" / "fake-distribution"
     func = versions.get_frontend_version
     result = func(package_path)
@@ -49,7 +51,7 @@ def test_get_frontend_version(test_project, bust_path_cache):
     ],
 )
 def test_update_backend_version(
-    test_project, bust_path_cache, version: str, expected: str
+    test_public_project, bust_path_cache, version: str, expected: str
 ):
     backend_path = _path.get_root_path() / "backend"
     func = versions.update_backend_version

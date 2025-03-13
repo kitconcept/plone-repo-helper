@@ -31,10 +31,14 @@ def convert_python_node_version(version: str) -> str:
             pattern = re.compile(raw_pattern)
             if re.search(pattern, pre):
                 pre = re.sub(pattern, replace, pre)
-        major, minor, patch = pypi_version.release
-        version = str(
-            semver.Version(major, minor, patch, prerelease=pre, build=pypi_version.dev)
-        )
+
+    parts = list(pypi_version.release)
+    if len(parts) == 2:
+        parts.append(0)
+    major, minor, patch = parts
+    version = str(
+        semver.Version(major, minor, patch, prerelease=pre, build=pypi_version.dev)
+    )
     return version
 
 

@@ -4,7 +4,7 @@ import pytest
 
 
 @pytest.fixture
-def settings(test_project):
+def settings(test_public_project, bust_path_cache):
     from plone_repo_helper.settings import get_settings
 
     return get_settings()
@@ -19,7 +19,7 @@ def settings(test_project):
         "1.0.0",
     ],
 )
-def test_update_changelog_draft(settings, bust_path_cache, version: str):
+def test_update_changelog_draft(settings, version: str):
     func = changelog.update_changelog
     new_entries, fullchangelog = func(settings=settings, draft=True, version=version)
     assert f"## {version} (" in fullchangelog
@@ -37,7 +37,7 @@ def test_update_changelog_draft(settings, bust_path_cache, version: str):
         "1.0.0",
     ],
 )
-def test_update_changelog(settings, bust_path_cache, version: str):
+def test_update_changelog(settings, version: str):
     old_project_changelog = settings.changelogs.root.read_text()
     func = changelog.update_changelog
     new_entries, _ = func(settings=settings, draft=False, version=version)
@@ -63,7 +63,7 @@ def test_update_changelog(settings, bust_path_cache, version: str):
         ["1.0.0", False],
     ],
 )
-def test_update_backend_changelog(settings, bust_path_cache, version: str, draft: bool):
+def test_update_backend_changelog(settings, version: str, draft: bool):
     old_changelog = settings.backend.changelog.read_text()
     func = changelog.update_backend_changelog
     result = func(settings=settings, draft=draft, version=version)

@@ -4,6 +4,7 @@ from ._hatch import get_hatch
 from ._path import change_cwd
 from .changelog import update_backend_changelog
 from .versions import convert_python_node_version
+from .versions import update_backend_version
 from plone_repo_helper import _types as t
 from plone_repo_helper import logger
 
@@ -11,9 +12,14 @@ import subprocess
 
 
 def release_backend(settings: t.RepositorySettings, version: str, dry_run: bool):
+    package = settings.backend
+    # Update backend version
     hatch = get_hatch()
     if not dry_run:
+        update_backend_version(package.path, version)
         update_backend_changelog(settings, dry_run, version)
+    if not package.publish:
+        return
     with change_cwd(settings.backend.path):
         logger.info(f"Build backend package {settings.backend.name}")
         # Build package
@@ -23,17 +29,19 @@ def release_backend(settings: t.RepositorySettings, version: str, dry_run: bool)
             hatch("publish")
 
 
-def release_frontend(settings: t.RepositorySettings, version: str, dry_run: bool):
-    sem_version: str = convert_python_node_version(version)
+def release_frontend(
+    settings: t.RepositorySettings, project_version: str, dry_run: bool
+):
+    version = convert_python_node_version(project_version)
     action = "dry-release" if dry_run else "release"
-    logger.info(
-        f"Do a {action} for frontend package {settings.frontend.name} ({sem_version})"
-    )
-    volto_addon_name = settings.frontend.name
-    cmd = (
-        f"pnpm --filter {volto_addon_name} {action} "
-        f"--ci --no-git --no-github.release -i {sem_version}"
-    )
+    package = settings.frontend
+    volto_addon_name = package.name
+    logger.info(f"Frontend: {action} for package {volto_addon_name} ({version})")
+    cmd = f"npx release-it --ci --no-git --no-github.release -i {version}"
+    if dry_run:
+        cmd += " --dry-run"
+    if not package.publish:
+        cmd += " --no-npm.publish"
     result = subprocess.run(  # noQA: S602
         cmd,
         capture_output=True,

@@ -74,8 +74,6 @@ def _release_backend(
     dry_run: bool,
 ):
     typer.echo(f"Backend release {original_version} -> {next_version}")
-    backend_path = settings.backend.path
-    vutils.update_backend_version(backend_path, next_version)
     utils.release_backend(settings, next_version, dry_run)
 
 

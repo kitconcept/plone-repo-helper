@@ -5,7 +5,7 @@ from typer.testing import CliRunner
 runner = CliRunner()
 
 
-def test_version(caplog):
+def test_version(caplog, test_public_project):
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
     messages = result.stdout.split("\n")

@@ -1,4 +1,4 @@
-from .parser import raw_settings
+from .parser import parse_config
 from plone_repo_helper import _types as t
 from plone_repo_helper import utils
 from plone_repo_helper.utils._path import get_root_path
@@ -7,6 +7,7 @@ from plone_repo_helper.utils._path import get_root_path
 def get_settings() -> t.RepositorySettings:
     """Return base settings."""
     root_path = get_root_path()
+    raw_settings = parse_config()
     try:
         name = raw_settings.repository.name
     except AttributeError:
@@ -15,6 +16,7 @@ def get_settings() -> t.RepositorySettings:
     root_changelog = root_path / raw_settings.repository.changelog
     version_path = root_path / raw_settings.repository.version
     version = version_path.read_text().strip()
+    version_format = raw_settings.repository.get("version_format", "semver")
     compose_path = root_path / raw_settings.repository.compose
     backend = utils.get_backend(root_path, raw_settings)
     frontend = utils.get_frontend(root_path, raw_settings)
@@ -25,6 +27,7 @@ def get_settings() -> t.RepositorySettings:
         managed_by_uv=managed_by_uv,
         root_path=root_path,
         version=version,
+        version_format=version_format,
         backend=backend,
         frontend=frontend,
         version_path=version_path,

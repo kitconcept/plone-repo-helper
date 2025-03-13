@@ -17,8 +17,9 @@ def repo_for_project(path: Path) -> Repo:
 
 
 def push_changes(repo: Repo, ref: Tag | None = None):
-    origin = repo.remote("origin")
-    if not origin:
+    try:
+        origin = repo.remote("origin")
+    except ValueError:
         logger.info("No origin for this repo")
         return
     if ref:

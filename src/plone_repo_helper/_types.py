@@ -22,6 +22,7 @@ class Package:
     path: Path
     changelog: Path
     towncrier: Path
+    publish: bool = True
     version: str = ""
 
     def sanity(self) -> bool:
@@ -55,6 +56,7 @@ class RepositorySettings:
     managed_by_uv: bool
     root_path: Path
     version: str
+    version_format: str
     backend: Package
     frontend: Package
     version_path: Path
