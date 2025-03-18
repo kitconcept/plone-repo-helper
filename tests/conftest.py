@@ -97,6 +97,8 @@ def initialize_repo():
         repo = _git._initialize_repo_for_project(path)
         # Initial commit
         git_cmd = repo.git
+        git_cmd.config("--local", "user.email", "'foo@example.com'")
+        git_cmd.config("--local", "user.name", "'John Doe'")
         git_cmd.add(".")
         git_cmd.commit("-m", "Initial commit")
         # Add a tag
