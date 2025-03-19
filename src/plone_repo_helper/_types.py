@@ -32,20 +32,33 @@ class Package:
 
 
 @dataclass
+class TowncrierSection:
+    """Towncrier section."""
+
+    section_id: str
+    name: str
+    path: Path
+
+    def sanity(self) -> bool:
+        return self.path.exists() if self.path else False
+
+
+@dataclass
 class TowncrierSettings:
     """Towncrier settings."""
 
-    backend: Path
-    frontend: Path
+    sections: list[TowncrierSection]
 
-    def sections(self) -> tuple[tuple[str, Path], ...]:
-        return (
-            ("Backend", self.backend),
-            ("Frontend", self.frontend),
-        )
+    def __getattr__(self, name: str):
+        for section in self.sections:
+            if section.section_id == name:
+                return section.path
+        raise AttributeError(f"{name} not found")
 
     def sanity(self) -> bool:
-        return self.backend.exists() and self.frontend.exists()
+        sections = self.sections
+        checks = [section.sanity() for section in sections]
+        return all(checks)
 
 
 @dataclass
@@ -63,6 +76,10 @@ class RepositorySettings:
     compose_path: Path
     towncrier: TowncrierSettings
     changelogs: Changelogs
+
+    @property
+    def path(self) -> Path:
+        return self.root_path
 
     def sanity(self) -> bool:
         steps = [

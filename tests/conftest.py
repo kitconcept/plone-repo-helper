@@ -59,6 +59,15 @@ def test_internal_project(monkeypatch, tmp_path):
 
 
 @pytest.fixture
+def test_project_root_changelog(monkeypatch, tmp_path):
+    src = RESOURCES / "fake-project-root-changelog"
+    dst = tmp_path / "fake-project-root-changelog"
+    shutil.copytree(src, dst)
+    monkeypatch.chdir(dst)
+    return dst
+
+
+@pytest.fixture
 def bust_path_cache():
     from plone_repo_helper.utils import _path
 

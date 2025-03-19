@@ -18,9 +18,10 @@ def get_settings() -> t.RepositorySettings:
     version = version_path.read_text().strip()
     version_format = raw_settings.repository.get("version_format", "semver")
     compose_path = root_path / raw_settings.repository.compose
+    repository_towncrier = raw_settings.repository.get("towncrier", {})
     backend = utils.get_backend(root_path, raw_settings)
     frontend = utils.get_frontend(root_path, raw_settings)
-    towncrier = utils.get_towncrier_settings(backend, frontend)
+    towncrier = utils.get_towncrier_settings(backend, frontend, repository_towncrier)
     changelogs = utils.get_changelogs(root_changelog, backend, frontend)
     return t.RepositorySettings(
         name=name,

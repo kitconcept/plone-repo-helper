@@ -4,6 +4,8 @@ from datetime import datetime
 from pathlib import Path
 from plone_repo_helper import _types as t
 from plone_repo_helper import utils
+from towncrier._builder import find_fragments
+from towncrier._settings import load_config_from_options
 from towncrier._shell import cli as towncrier_app
 
 
@@ -52,21 +54,40 @@ def _run_towncrier(config: Path, name: str, version: str, draft: bool = True) ->
 
 def generate_section_changelogs(
     settings: t.RepositorySettings, version: str = ""
-) -> dict[str, str]:
+) -> dict[str, dict]:
     sections = {}
-    config = settings.towncrier
-    for section, config_path in config.sections():
+    config: t.TowncrierSettings = settings.towncrier
+    for section in config.sections:
+        config_path = section.path
         result = _run_towncrier(
             config_path, name=settings.name, version=version, draft=True
         )
-        sections[section] = _prepare_section_changelog(result)
+        sections[section.section_id] = {
+            "name": section.name,
+            "changes": _prepare_section_changelog(result),
+        }
     return sections
+
+
+def _find_fragments(path: Path, towncrier_settings: Path) -> list[tuple[str, str]]:
+    base_directory, config = load_config_from_options(path, towncrier_settings)
+    _, fragments = find_fragments(base_directory, config, False)
+    return fragments
+
+
+def _cleanup_news(path: Path, towncrier_settings: Path):
+    base_directory, config = load_config_from_options(path, towncrier_settings)
+    all_fragments = _find_fragments(base_directory, config)
+    for raw_fragment_path, _ in all_fragments:
+        fragment_path = Path(raw_fragment_path).resolve()
+        # Remove
+        fragment_path.unlink()
 
 
 # Update Changelog at root
 def _update_project_changelog(
     settings: t.RepositorySettings,
-    sections: dict[str, str],
+    sections: dict[str, dict],
     draft: bool = True,
     version: str = "",
 ) -> tuple[str, str]:
@@ -74,14 +95,23 @@ def _update_project_changelog(
     changelog_text = root_changelog.read_text()
     header = f"## {version} ({datetime.now():%Y-%m-%d})"
     new_entry = f"{header}\n"
-    for section_id, text in sections.items():
-        new_entry = f"{new_entry}\n### {section_id}\n{text}"
+    has_root = False
+    for section_id, section_data in sections.items():
+        if section_id == "root":
+            has_root = True
+        section_name = section_data["name"]
+        text = section_data["changes"]
+        new_entry = f"{new_entry}\n### {section_name}\n{text}"
 
     text = f"{changelog_text}".replace(
         CHANGELOG_PLACEHOLDER, f"{CHANGELOG_PLACEHOLDER}\n{new_entry}"
     )
     if not draft:
         root_changelog.write_text(text)
+        if has_root:
+            # Cleanup top-level news folder
+            _cleanup_news(settings.root_path, settings.towncrier.root.path)
+
     return new_entry, text
 
 
@@ -89,6 +119,18 @@ def update_backend_changelog(
     settings: t.RepositorySettings, draft: bool = True, version: str = ""
 ) -> str:
     config_path = settings.towncrier.backend
+    result = _run_towncrier(
+        config_path, name=settings.name, version=version, draft=draft
+    )
+    if draft:
+        result = _cleanup_draft(result, True)
+    return result
+
+
+def update_root_changelog(
+    settings: t.RepositorySettings, draft: bool = True, version: str = ""
+) -> str:
+    config_path = settings.towncrier.root
     result = _run_towncrier(
         config_path, name=settings.name, version=version, draft=draft
     )

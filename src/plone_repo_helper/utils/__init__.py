@@ -16,9 +16,22 @@ def get_changelogs(
 
 
 def get_towncrier_settings(
-    backend: t.Package, frontend: t.Package
+    backend: t.Package, frontend: t.Package, repository: dict
 ) -> t.TowncrierSettings:
-    return t.TowncrierSettings(backend=backend.towncrier, frontend=frontend.towncrier)
+    sections = []
+    raw_sections = [
+        ("backend", "Backend", backend.towncrier),
+        ("frontend", "Frontend", frontend.towncrier),
+    ]
+    if repository:
+        section = (
+            "repository",
+            repository["section"],
+            Path(repository["settings"]).resolve(),
+        )
+        raw_sections.append(section)
+    sections = [t.TowncrierSection(*info) for info in raw_sections]
+    return t.TowncrierSettings(sections=sections)
 
 
 def get_pyproject(settings: t.RepositorySettings) -> Path | None:

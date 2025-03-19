@@ -3,13 +3,6 @@ from plone_repo_helper.utils import changelog
 import pytest
 
 
-@pytest.fixture
-def settings(test_public_project, bust_path_cache):
-    from plone_repo_helper.settings import get_settings
-
-    return get_settings()
-
-
 @pytest.mark.parametrize(
     "version",
     [
@@ -74,3 +67,33 @@ def test_update_backend_changelog(settings, version: str, draft: bool):
     else:
         assert old_changelog != new_changelog
         assert "Done" in result
+
+
+@pytest.mark.parametrize(
+    "section_id,total",
+    [["backend", 1], ["frontend", 1]],
+)
+def test__find_fragments(settings, section_id: str, total: int):
+    func = changelog._find_fragments
+    section = getattr(settings, section_id)
+    path = section.path
+    towncrier_settings = section.towncrier
+    results = func(path, towncrier_settings)
+    assert len(results) == total
+
+
+@pytest.mark.parametrize(
+    "section_id,total",
+    [
+        ["backend", 1],
+        ["frontend", 1],
+        ["repository", 2],
+    ],
+)
+def test__find_fragments_root(settings_root_changelog, section_id: str, total: int):
+    func = changelog._find_fragments
+    towncrier_settings = getattr(settings_root_changelog.towncrier, section_id)
+    section = getattr(settings_root_changelog, section_id, settings_root_changelog)
+    path = section.path
+    results = func(path, towncrier_settings)
+    assert len(results) == total
