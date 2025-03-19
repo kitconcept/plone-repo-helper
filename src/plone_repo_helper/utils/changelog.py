@@ -97,7 +97,7 @@ def _update_project_changelog(
     new_entry = f"{header}\n"
     has_root = False
     for section_id, section_data in sections.items():
-        if section_id == "root":
+        if section_id == "repository":
             has_root = True
         section_name = section_data["name"]
         text = section_data["changes"]
