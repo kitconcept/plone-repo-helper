@@ -37,11 +37,12 @@ def release_frontend(
     package = settings.frontend
     volto_addon_name = package.name
     logger.info(f"Frontend: {action} for package {volto_addon_name} ({version})")
-    cmd = f"npx release-it --ci --no-git --no-github.release -i {version}"
+    cmd = "npx release-it --ci --no-git --no-github.release"
     if dry_run:
         cmd += " --dry-run"
-    if not package.publish:
+    elif not package.publish:
         cmd += " --no-npm.publish"
+    cmd += f" -i {version}"
     result = subprocess.run(  # noQA: S602
         cmd,
         capture_output=True,

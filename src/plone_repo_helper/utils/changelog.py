@@ -76,8 +76,7 @@ def _find_fragments(path: Path, towncrier_settings: Path) -> list[tuple[str, str
 
 
 def _cleanup_news(path: Path, towncrier_settings: Path):
-    base_directory, config = load_config_from_options(path, towncrier_settings)
-    all_fragments = _find_fragments(base_directory, config)
+    all_fragments = _find_fragments(path, towncrier_settings)
     for raw_fragment_path, _ in all_fragments:
         fragment_path = Path(raw_fragment_path).resolve()
         # Remove
@@ -110,7 +109,7 @@ def _update_project_changelog(
         root_changelog.write_text(text)
         if has_root:
             # Cleanup top-level news folder
-            _cleanup_news(settings.root_path, settings.towncrier.root.path)
+            _cleanup_news(settings.root_path, settings.towncrier.repository.path)
 
     return new_entry, text
 
@@ -118,19 +117,7 @@ def _update_project_changelog(
 def update_backend_changelog(
     settings: t.RepositorySettings, draft: bool = True, version: str = ""
 ) -> str:
-    config_path = settings.towncrier.backend
-    result = _run_towncrier(
-        config_path, name=settings.name, version=version, draft=draft
-    )
-    if draft:
-        result = _cleanup_draft(result, True)
-    return result
-
-
-def update_root_changelog(
-    settings: t.RepositorySettings, draft: bool = True, version: str = ""
-) -> str:
-    config_path = settings.towncrier.root
+    config_path = settings.towncrier.backend.path
     result = _run_towncrier(
         config_path, name=settings.name, version=version, draft=draft
     )

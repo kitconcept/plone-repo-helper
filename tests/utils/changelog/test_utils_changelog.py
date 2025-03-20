@@ -95,5 +95,5 @@ def test__find_fragments_root(settings_root_changelog, section_id: str, total: i
     towncrier_settings = getattr(settings_root_changelog.towncrier, section_id)
     section = getattr(settings_root_changelog, section_id, settings_root_changelog)
     path = section.path
-    results = func(path, towncrier_settings)
+    results = func(path, towncrier_settings.path)
     assert len(results) == total

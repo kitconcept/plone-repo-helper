@@ -52,7 +52,7 @@ class TowncrierSettings:
     def __getattr__(self, name: str):
         for section in self.sections:
             if section.section_id == name:
-                return section.path
+                return section
         raise AttributeError(f"{name} not found")
 
     def sanity(self) -> bool:
