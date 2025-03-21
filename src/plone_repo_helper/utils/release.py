@@ -36,7 +36,7 @@ def release_frontend(
     action = "dry-release" if dry_run else "release"
     package = settings.frontend
     volto_addon_name = package.name
-    logger.info(f"Frontend: {action} for package {volto_addon_name} ({version})")
+    logger.debug(f"Frontend: {action} for package {volto_addon_name} ({version})")
     cmd = "npx release-it --ci --no-git --no-github.release"
     if dry_run:
         cmd += " --dry-run"

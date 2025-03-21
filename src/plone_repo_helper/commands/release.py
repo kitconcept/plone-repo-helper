@@ -1,6 +1,7 @@
 from plone_repo_helper import _types as t
 from plone_repo_helper.utils import _git as gitutils
 from plone_repo_helper.utils import changelog as chgutils
+from plone_repo_helper.utils import display as dutils
 from plone_repo_helper.utils import release as utils
 from plone_repo_helper.utils import versions as vutils
 from typing import Annotated
@@ -9,6 +10,17 @@ import typer
 
 
 app = typer.Typer()
+
+
+def _check_for_confirmation(
+    question: str = "[bold yellow]Continue?[/bold yellow]",
+    goodbye: str = "Exiting now",
+) -> bool:
+    status: bool = dutils.confirm(question)
+    if not (status):
+        dutils.print(goodbye)
+        raise typer.Exit(0)
+    return status
 
 
 def _get_next_version(
@@ -28,7 +40,33 @@ def _get_next_version(
     return next_version, error
 
 
-def _prepare_changelog(
+def _step_confirm_version(
+    step_id: int,
+    title: str,
+    settings: t.RepositorySettings,
+    original_version: str,
+    next_version: str,
+    dry_run: bool,
+) -> bool:
+    dutils.indented_print(f"- Bump version from {settings.version} to {next_version}")
+    return _check_for_confirmation()
+
+
+def _step_goodbye(
+    step_id: int,
+    title: str,
+    settings: t.RepositorySettings,
+    original_version: str,
+    next_version: str,
+    dry_run: bool,
+) -> bool:
+    dutils.indented_print(f"- Completed the release of version {next_version}")
+    return _check_for_confirmation()
+
+
+def _step_prepare_changelog(
+    step_id: int,
+    title: str,
     settings: t.RepositorySettings,
     original_version: str,
     next_version: str,
@@ -39,15 +77,14 @@ def _prepare_changelog(
     new_entries, _ = chgutils.update_changelog(
         settings, draft=True, version=next_version
     )
-    typer.echo(f"{'=' * 50}\n{new_entries}\n{'=' * 50}")
-
-    status: bool = typer.confirm("Should we proceed?", default=True)
-    if not (status):
-        typer.echo("Exiting now")
-    return status
+    text = f"{'=' * 50}\n{new_entries}\n{'=' * 50}"
+    dutils.indented_print(text)
+    return _check_for_confirmation()
 
 
-def _update_repository(
+def _step_update_repository(
+    step_id: int,
+    title: str,
     settings: t.RepositorySettings,
     original_version: str,
     next_version: str,
@@ -55,48 +92,57 @@ def _update_repository(
 ):
     if not dry_run:
         chgutils.update_changelog(settings, draft=dry_run, version=next_version)
-        typer.echo(f"Updated {settings.changelogs.root} file")
+        dutils.indented_print(f"- Updated {settings.changelogs.root} file")
     # Update next_version on version.txt
     version_file = settings.version_path
     version_file.write_text(f"{next_version}\n")
-    typer.echo(f"Updated {version_file} file")
+    dutils.indented_print(f"- Updated {version_file} file")
     # Update docker-compose.yml
     compose_file = settings.compose_path
     contents = compose_file.read_text().replace(original_version, next_version)
     compose_file.write_text(contents)
-    typer.echo(f"Updated {compose_file} file")
+    dutils.indented_print(f"- Updated {compose_file} file")
 
 
-def _release_backend(
+def _step_release_backend(
+    step_id: int,
+    title: str,
     settings: t.RepositorySettings,
     original_version: str,
     next_version: str,
     dry_run: bool,
 ):
-    typer.echo(f"Backend release {original_version} -> {next_version}")
     utils.release_backend(settings, next_version, dry_run)
+    dutils.indented_print(f"- Released {settings.backend.name}: {next_version}")
 
 
-def _release_frontend(
+def _step_release_frontend(
+    step_id: int,
+    title: str,
     settings: t.RepositorySettings,
     original_version: str,
     next_version: str,
     dry_run: bool,
 ):
-    typer.echo(f"Frontend release {original_version} -> {next_version}")
+    next_version = vutils.convert_python_node_version(next_version)
     utils.release_frontend(settings, next_version, dry_run)
+    dutils.indented_print(f"- Released {settings.frontend.name}: {next_version}")
 
 
-def _update_git(
+def _step_update_git(
+    step_id: int,
+    title: str,
     settings: t.RepositorySettings,
     original_version: str,
     next_version: str,
     dry_run: bool,
 ):
     if not dry_run:
-        typer.echo(f"Creating tag {next_version}")
         repo = gitutils.repo_for_project(settings.root_path)
         gitutils.finish_release(repo, next_version)
+        dutils.indented_print(f"- Created tag {next_version}")
+    else:
+        dutils.indented_print(f"- Skipped creating tag {next_version}")
 
 
 @app.command()
@@ -116,33 +162,30 @@ def do(
     """Release the packages in this mono repo."""
     settings: t.RepositorySettings = ctx.obj.settings
     original_version = settings.version
+
+    dutils.print(f"\n[bold green]Release {settings.name}[/bold green]\n")
     next_version, error = _get_next_version(settings, original_version, desired_version)
     if error:
-        typer.echo(error)
-        typer.Exit(0)
-        return
-    typer.echo(f"Bump version from {original_version} to {next_version}")
-
-    # Changelog
-    proceed = _prepare_changelog(settings, original_version, next_version, dry_run)
-    if not (proceed):
+        dutils.print(error)
         typer.Exit(0)
         return
 
-    # Update repository components
-    _update_repository(settings, original_version, next_version, dry_run)
-
-    # Release backend
-    _release_backend(settings, original_version, next_version, dry_run)
-
-    # Release frontend
-    _release_frontend(settings, original_version, next_version, dry_run)
-
-    # Commit changes, create tag
-    _update_git(settings, original_version, next_version, dry_run)
-
-    # Finish
-    typer.echo(f"Completed the release of version {next_version}")
+    steps = [
+        ("Next version", _step_confirm_version),
+        ("Display Changelog", _step_prepare_changelog),
+        ("Update repository components", _step_update_repository),
+        ("Release backend", _step_release_backend),
+        ("Release frontend", _step_release_frontend),
+        ("Commit changes, create tag", _step_update_git),
+        ("Goodbye", _step_goodbye),
+    ]
+    total_steps = len(steps)
+    for step_id, (title, func) in enumerate(steps, start=1):
+        dutils.print(
+            f"\n[bold green]{step_id}/{total_steps}[/bold green] [bold]{title}[/bold]"
+        )
+        func(step_id, title, settings, original_version, next_version, dry_run)
+    raise typer.Exit(0)
 
 
 @app.command()
@@ -156,4 +199,4 @@ def changelog(
     new_entries, _ = chgutils.update_changelog(
         settings, draft=True, version=original_version
     )
-    typer.echo(f"{'=' * 50}\n{new_entries}\n{'=' * 50}")
+    dutils.print(f"{'=' * 50}\n{new_entries}\n{'=' * 50}")
