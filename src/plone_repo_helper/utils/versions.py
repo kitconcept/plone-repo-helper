@@ -16,6 +16,20 @@ VERSION_PATTERNS = (
     (r"^(rc)(\d{1,2})", r"rc.\2"),
 )
 
+BUMPS = [
+    "release",
+    "major",
+    "minor",
+    "micro",
+    "patch",
+    "fix",
+    "a",
+    "b",
+    "rc",
+    "post",
+    "dev",
+]
+
 
 def convert_python_node_version(version: str) -> str:
     """Converts a PyPI version into a semver version
@@ -82,3 +96,37 @@ def next_version(desired_version: str, original_version: str) -> str:
     scheme = standard.StandardScheme("", {})
     next_version = scheme.update(desired_version, original_version, {})
     return next_version
+
+
+def report_cur_versions(settings: t.RepositorySettings) -> dict:
+    sections: list[dict] = []
+    cur_versions = {
+        "repository": {"title": "Repository", "version": settings.version},
+        "sections": sections,
+    }
+    for title, section in (
+        ("Repository", settings),
+        ("Backend", settings.backend),
+        ("Frontend", settings.frontend),
+    ):
+        sections.append(
+            {"title": title, "name": section.name, "version": section.version}
+        )
+    return cur_versions
+
+
+def report_next_versions(settings: t.RepositorySettings):
+    cur_version = settings.version
+    versions = []
+    for bump in BUMPS:
+        nv = next_version(bump, cur_version)
+        nv_semver = convert_python_node_version(nv)
+        versions.append(
+            {
+                "bump": bump,
+                "repository": nv,
+                "backend": nv,
+                "frontend": nv_semver,
+            }
+        )
+    return versions

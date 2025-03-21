@@ -42,7 +42,12 @@ app.add_typer(
     no_args_is_help=True,
     help="Handle Products.CMFPlone dependency",
 )
-app.add_typer(app_version)
+app.add_typer(
+    app_version,
+    name="version",
+    no_args_is_help=True,
+    help="Display version information about this repository",
+)
 
 
 def cli():
