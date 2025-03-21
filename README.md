@@ -9,6 +9,38 @@ The **Plone Monorepo Helper** is a tool designed to manage monorepos containing 
 
 ## Setup
 
+### Tool setup
+
+Clone this repository
+
+```sh
+git clone git@github.com:kitconcept/plone-repo-helper.git
+```
+
+In the repository, install the tool
+
+```sh
+make install
+```
+
+### Authentications
+
+#### PyPi
+
+We use hatch to make the release, please make sure authentication is in place by running:
+
+```sh
+hatch publish --initialize-auth
+```
+
+#### NPM
+
+```sh
+npm whoami
+```
+
+### Repository
+
 Ensure that your monorepo contains a `repository.toml` file. Below is an example of such a configuration:
 
 ```toml
