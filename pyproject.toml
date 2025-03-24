@@ -43,7 +43,7 @@ Issues = "https://github.com/kitconcept/plone-repo-helper/issues"
 Source = "https://github.com/kitconcept/plone-repo-helper"
 
 [project.scripts]
-repo_helper = "plone_repo_helper.cli:cli"
+repo = "plone_repo_helper.cli:cli"
 
 [build-system]
 requires = ["hatchling"]
@@ -73,7 +73,6 @@ test = [
 
 [tool.uv]
 default-groups = ["test"]
-
 
 [tool.towncrier]
 package = "plone_repo_helper"

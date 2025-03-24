@@ -82,14 +82,14 @@ publish = false
 To see all available commands, run:
 
 ```bash
-uv run repo_helper
+uv run repo
 ```
 
 ### Check Installed Version
 To check the installed version of the tool, use:
 
 ```bash
-uv run repo_helper --version
+uv run repo --version
 ```
 
 ## Check repository versions
@@ -101,7 +101,7 @@ List current versions for:
 - Frontend package
 
 ```bash
-uv run repo_helper version
+uv run repo versions
 ```
 
 ## Releasing Monorepo Packages
@@ -114,7 +114,7 @@ The release process consists of two subcommands:
 To generate and display the draft changelog, run:
 
 ```bash
-uv run repo_helper release changelog
+uv run repo release changelog
 ```
 
 ### Perform Release
@@ -141,7 +141,7 @@ Use this flag to simulate the release process without actually publishing the ne
 **Example:**
 
 ```bash
-uv run repo_helper release do a
+uv run repo release do a
 ```
 
 This will create an `alpha` release.
@@ -156,12 +156,12 @@ The following commands are available exclusively for distributions based on `Pro
 To check the current Plone version, run:
 
 ```bash
-uv run repo_helper plone check
+uv run repo plone check
 ```
 
 ### Upgrade Plone
 To upgrade Plone to a specific version, use:
 
 ```bash
-uv run repo_helper plone upgrade 6.1.1
+uv run repo plone upgrade 6.1.1
 ```
