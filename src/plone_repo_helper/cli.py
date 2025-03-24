@@ -2,7 +2,7 @@ from plone_repo_helper import __version__
 from plone_repo_helper import _types as t
 from plone_repo_helper.commands.plone import app as app_plone
 from plone_repo_helper.commands.release import app as app_release
-from plone_repo_helper.commands.version import app as app_version
+from plone_repo_helper.commands.versions import app as app_versions
 from plone_repo_helper.settings import get_settings
 from typing import Annotated
 
@@ -43,8 +43,8 @@ app.add_typer(
     help="Handle Products.CMFPlone dependency",
 )
 app.add_typer(
-    app_version,
-    name="version",
+    app_versions,
+    name="versions",
     no_args_is_help=True,
     help="Display version information about this repository",
 )

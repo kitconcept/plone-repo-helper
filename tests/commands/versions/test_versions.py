@@ -6,7 +6,7 @@ runner = CliRunner()
 
 
 def test_current_version(caplog, test_public_project):
-    result = runner.invoke(app, ["version", "current"])
+    result = runner.invoke(app, ["versions", "current"])
     assert result.exit_code == 0
     messages = result.stdout.split("\n")
     assert "Current versions" in messages[0]
@@ -22,7 +22,7 @@ def test_current_version(caplog, test_public_project):
 
 
 def test_next_version(caplog, test_public_project):
-    result = runner.invoke(app, ["version", "next"])
+    result = runner.invoke(app, ["versions", "next"])
     assert result.exit_code == 0
     messages = result.stdout.split("\n")
     assert "Possible next version" in messages[0]
