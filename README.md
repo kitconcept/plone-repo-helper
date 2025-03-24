@@ -51,6 +51,10 @@ changelog = "CHANGELOG.md"
 version = "version.txt"
 compose = "docker-compose.yml"
 
+[repository.towncrier]
+section = "Project"
+settings = "towncrier.toml"
+
 [backend]
 path = "backend"
 
@@ -59,6 +63,7 @@ name = "fake.distribution"
 path = "backend"
 changelog = "backend/CHANGELOG.md"
 towncrier_settings = "backend/pyproject.toml"
+publish = false
 
 [frontend]
 path = "frontend"
@@ -68,6 +73,7 @@ name = "fake-distribution"
 path = "frontend/packages/fake-distribution"
 changelog = "frontend/packages/fake-distribution/CHANGELOG.md"
 towncrier_settings = "frontend/packages/fake-distribution/towncrier.toml"
+publish = false
 ```
 
 ## Usage
