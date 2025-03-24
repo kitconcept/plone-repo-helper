@@ -39,9 +39,10 @@ def release_frontend(
     logger.debug(f"Frontend: {action} for package {volto_addon_name} ({version})")
     cmd = "npx release-it --ci --no-git --no-github.release"
     if dry_run:
-        cmd += " --dry-run"
+        # No need to check if we are authenticated on NPM
+        cmd += " --dry-run --npm.skipChecks"
     elif not package.publish:
-        cmd += " --no-npm.publish"
+        cmd += "  --npm.skipChecks --no-npm.publish"
     cmd += f" -i {version}"
     result = subprocess.run(  # noQA: S602
         cmd,
