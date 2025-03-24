@@ -148,20 +148,23 @@ This will create an `alpha` release.
 
 ---
 
-## Plone Distribution Support
+## Dependencies
 
-The following commands are available exclusively for distributions based on `Products.CMFPlone`.
+### Plone (Products.CMFPlone)
 
-### Check Plone Version
+The following commands are available exclusively for projects based on `Products.CMFPlone` and managed by UV.
+
+#### Check version
 To check the current Plone version, run:
 
 ```bash
-uv run repo plone check
+uv run repo deps plone check
 ```
 
-### Upgrade Plone
-To upgrade Plone to a specific version, use:
+#### Upgrade version
+
+To upgrade `Products.CMFPlone` to a specific version, use:
 
 ```bash
-uv run repo plone upgrade 6.1.1
+uv run repo deps plone upgrade 6.1.1
 ```

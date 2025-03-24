@@ -1,6 +1,6 @@
 from plone_repo_helper import __version__
 from plone_repo_helper import _types as t
-from plone_repo_helper.commands.plone import app as app_plone
+from plone_repo_helper.commands.dependencies import app as app_deps
 from plone_repo_helper.commands.release import app as app_release
 from plone_repo_helper.commands.versions import app as app_versions
 from plone_repo_helper.settings import get_settings
@@ -37,10 +37,10 @@ app.add_typer(
     app_release, name="release", no_args_is_help=True, help="Release mono repo packages"
 )
 app.add_typer(
-    app_plone,
-    name="plone",
+    app_deps,
+    name="deps",
     no_args_is_help=True,
-    help="Handle Products.CMFPlone dependency",
+    help="Check and manage dependencies",
 )
 app.add_typer(
     app_versions,
