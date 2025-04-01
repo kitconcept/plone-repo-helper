@@ -76,6 +76,8 @@ class RepositorySettings:
     compose_path: Path
     towncrier: TowncrierSettings
     changelogs: Changelogs
+    remote_origin: str
+    _tmp_changelog: str = ""
 
     @property
     def path(self) -> Path:

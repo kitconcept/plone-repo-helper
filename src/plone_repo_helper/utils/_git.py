@@ -1,3 +1,5 @@
+from git import InvalidGitRepositoryError
+from git import Remote
 from git import Repo
 from git import Tag
 from pathlib import Path
@@ -16,11 +18,27 @@ def repo_for_project(path: Path) -> Repo:
     return repo
 
 
-def push_changes(repo: Repo, ref: Tag | None = None):
+def _get_remote(repo: Repo) -> Remote | None:
     try:
         origin = repo.remote("origin")
     except ValueError:
         logger.info("No origin for this repo")
+        origin = None
+    return origin
+
+
+def remote_origin(path: Path) -> str:
+    """Return the url for the remote origin."""
+    try:
+        repo = repo_for_project(path)
+        origin = _get_remote(repo)
+    except InvalidGitRepositoryError:
+        origin = None
+    return origin.url if origin else ""
+
+
+def push_changes(repo: Repo, ref: Tag | None = None):
+    if not (origin := _get_remote(repo)):
         return
     if ref:
         origin.push(ref)
