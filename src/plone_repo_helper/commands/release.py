@@ -6,7 +6,6 @@ from plone_repo_helper.utils import release as utils
 from plone_repo_helper.utils import versions as vutils
 from typing import Annotated
 
-import subprocess
 import typer
 
 
@@ -146,31 +145,6 @@ def _step_update_git(
         dutils.indented_print(f"- Skipped creating tag {next_version}")
 
 
-def _step_create_release(
-    step_id: int,
-    title: str,
-    settings: t.RepositorySettings,
-    original_version: str,
-    next_version: str,
-    dry_run: bool,
-):
-    if not dry_run:
-        root_changelog = settings.changelogs.root
-        changelog_text = root_changelog.read_text()
-        cmd = f"npx release-it --ci --no-git --npm.skipChecks --no-npm.publish --github.release=true --github.releaseName='$version' --github.releaseNotes='cat {changelog_text}'"  # noQA: E501
-        result = subprocess.run(  # noQA: S602
-            cmd,
-            capture_output=True,
-            text=True,
-            shell=True,
-            cwd=settings.frontend.path,
-        )
-        if result.returncode:
-            raise RuntimeError(f"Creating a Github release failed {result.stderr}")
-
-        dutils.indented_print("- Created Release in Github")
-
-
 @app.command()
 def do(
     ctx: typer.Context,
@@ -203,7 +177,6 @@ def do(
         ("Release backend", _step_release_backend),
         ("Release frontend", _step_release_frontend),
         ("Commit changes, create tag", _step_update_git),
-        ("Create release", _step_create_release),
         ("Goodbye", _step_goodbye),
     ]
     total_steps = len(steps)
