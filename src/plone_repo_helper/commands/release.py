@@ -1,12 +1,12 @@
 from plone_repo_helper import _types as t
 from plone_repo_helper.utils import _git as gitutils
+from plone_repo_helper.utils import _github as ghutils
 from plone_repo_helper.utils import changelog as chgutils
 from plone_repo_helper.utils import display as dutils
 from plone_repo_helper.utils import release as utils
 from plone_repo_helper.utils import versions as vutils
 from typing import Annotated
 
-import subprocess
 import typer
 
 
@@ -78,6 +78,7 @@ def _step_prepare_changelog(
     new_entries, _ = chgutils.update_changelog(
         settings, draft=True, version=next_version
     )
+    settings._tmp_changelog = new_entries
     text = f"{'=' * 50}\n{new_entries}\n{'=' * 50}"
     dutils.indented_print(text)
     return _check_for_confirmation()
@@ -146,7 +147,7 @@ def _step_update_git(
         dutils.indented_print(f"- Skipped creating tag {next_version}")
 
 
-def _step_create_release(
+def _step_gh_release(
     step_id: int,
     title: str,
     settings: t.RepositorySettings,
@@ -154,21 +155,17 @@ def _step_create_release(
     next_version: str,
     dry_run: bool,
 ):
-    if not dry_run:
-        root_changelog = settings.changelogs.root
-        changelog_text = root_changelog.read_text()
-        cmd = f"npx release-it --ci --no-git --npm.skipChecks --no-npm.publish --github.release=true --github.releaseName='$version' --github.releaseNotes='cat {changelog_text}'"  # noQA: E501
-        result = subprocess.run(  # noQA: S602
-            cmd,
-            capture_output=True,
-            text=True,
-            shell=True,
-            cwd=settings.frontend.path,
+    if dry_run:
+        dutils.indented_print("- Skipping GitHub release creation")
+        return
+    if ghutils.check_token(settings):
+        msg = ghutils.create_release(settings, original_version, next_version)
+        dutils.indented_print(msg)
+    else:
+        dutils.indented_print(
+            "- Skipping GitHub release creation as you do not have a GITHUB_TOKEN"
+            "environment variable set"
         )
-        if result.returncode:
-            raise RuntimeError(f"Creating a Github release failed {result.stderr}")
-
-        dutils.indented_print("- Created Release in Github")
 
 
 @app.command()
@@ -203,7 +200,7 @@ def do(
         ("Release backend", _step_release_backend),
         ("Release frontend", _step_release_frontend),
         ("Commit changes, create tag", _step_update_git),
-        ("Create release", _step_create_release),
+        ("Create GitHub release", _step_gh_release),
         ("Goodbye", _step_goodbye),
     ]
     total_steps = len(steps)

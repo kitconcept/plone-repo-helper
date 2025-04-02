@@ -1,6 +1,7 @@
 from .parser import parse_config
 from plone_repo_helper import _types as t
 from plone_repo_helper import utils
+from plone_repo_helper.utils import _git as git_utils
 from plone_repo_helper.utils._path import get_root_path
 
 
@@ -23,6 +24,7 @@ def get_settings() -> t.RepositorySettings:
     frontend = utils.get_frontend(root_path, raw_settings)
     towncrier = utils.get_towncrier_settings(backend, frontend, repository_towncrier)
     changelogs = utils.get_changelogs(root_changelog, backend, frontend)
+    remote_origin = git_utils.remote_origin(root_path)
     return t.RepositorySettings(
         name=name,
         managed_by_uv=managed_by_uv,
@@ -35,4 +37,5 @@ def get_settings() -> t.RepositorySettings:
         compose_path=compose_path,
         towncrier=towncrier,
         changelogs=changelogs,
+        remote_origin=remote_origin,
     )
