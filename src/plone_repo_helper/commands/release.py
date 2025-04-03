@@ -101,9 +101,12 @@ def _step_update_repository(
     dutils.indented_print(f"- Updated {version_file} file")
     # Update docker-compose.yml
     compose_file = settings.compose_path
-    contents = compose_file.read_text().replace(original_version, next_version)
-    compose_file.write_text(contents)
-    dutils.indented_print(f"- Updated {compose_file} file")
+    if compose_file:
+        contents = compose_file.read_text().replace(original_version, next_version)
+        compose_file.write_text(contents)
+        dutils.indented_print(f"- Updated {compose_file} file")
+    else:
+        dutils.indented_print("- No docker-compose.yml file to update")
 
 
 def _step_release_backend(
