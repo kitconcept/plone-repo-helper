@@ -1,12 +1,16 @@
-from .constraints import get_plone_constraints
-from .pyproject import current_plone
+from .constraints import get_package_constraints
+from .pyproject import current_base_package
+from .pyproject import get_all_pinned_dependencies
+from .pyproject import parse_pyproject
 from .pyproject import update_pyproject
-from .versions import latest_plone_version
+from .versions import latest_package_version
 
 
 __all__ = [
-    "current_plone",
-    "get_plone_constraints",
-    "latest_plone_version",
+    "current_base_package",
+    "get_all_pinned_dependencies",
+    "get_package_constraints",
+    "latest_package_version",
+    "parse_pyproject",
     "update_pyproject",
 ]

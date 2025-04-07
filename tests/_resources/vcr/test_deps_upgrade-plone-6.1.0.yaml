@@ -9,7 +9,7 @@ interactions:
       User-Agent:
       - Python-urllib/3.12
     method: GET
-    uri: https://dist.plone.org/release/6.1.0rc1/constraints.txt
+    uri: https://dist.plone.org/release/6.1.0/constraints.txt
   response:
     body:
       string: '###############################################################################
@@ -321,7 +321,7 @@ interactions:
 
         # waitress==3.0.2 -> mxdev disabled (override)
 
-        # webtest==3.0.2 -> mxdev disabled (override)
+        # webtest==3.0.3 -> mxdev disabled (override)
 
         borg.localrole==3.1.11
 
@@ -329,7 +329,7 @@ interactions:
 
         five.intid==2.0.0
 
-        Plone==6.1.0rc1
+        Plone==6.1.0
 
         plone.alterego==2.0.1
 
@@ -337,7 +337,7 @@ interactions:
 
         plone.app.caching==4.0.0
 
-        plone.app.content==4.1.8
+        plone.app.content==4.1.9
 
         plone.app.contentlisting==3.0.5
 
@@ -351,7 +351,7 @@ interactions:
 
         plone.app.dexterity==4.0.3
 
-        plone.app.discussion==5.0.0a3
+        plone.app.discussion==5.0.0
 
         plone.app.event==5.2.1
 
@@ -423,13 +423,13 @@ interactions:
 
         plone.caching==2.0.1
 
-        plone.classicui==1.0.0a1
+        plone.classicui==1.0.0
 
         plone.contentrules==3.0.1
 
         plone.dexterity==3.0.7
 
-        plone.distribution==3.0.0
+        plone.distribution==3.1.0
 
         plone.event==2.0.2
 
@@ -487,7 +487,7 @@ interactions:
 
         plone.session==4.0.4
 
-        plone.staticresources==2.2.0b5
+        plone.staticresources==2.2.0
 
         plone.stringinterp==2.0.2
 
@@ -519,7 +519,7 @@ interactions:
 
         Products.CMFPlacefulWorkflow==3.0.5
 
-        Products.CMFPlone==6.1.0rc1
+        Products.CMFPlone==6.1.0
 
         Products.ExtendedPathIndex==4.0.1
 
@@ -943,9 +943,9 @@ interactions:
 
         plone.app.jquerytools==1.9.5
 
-        plone.app.mosaic==3.2.0b1
+        plone.app.mosaic==3.2.0
 
-        plone.app.standardtiles==3.2.0
+        plone.app.standardtiles==3.2.1
 
         plone.app.tiles==4.0.1
 
@@ -992,19 +992,19 @@ interactions:
         '
     headers:
       CF-RAY:
-      - 91e48503c807886a-GRU
+      - 92cc2409686de2d1-GIG
       Connection:
       - close
       Content-Length:
-      - '12411'
+      - '12397'
       Content-Type:
       - text/plain
       Date:
-      - Mon, 10 Mar 2025 17:26:52 GMT
+      - Mon, 07 Apr 2025 20:05:37 GMT
       NEL:
       - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
       Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=96I9iNk6ZZEAWOKIrr5MilJ0rWm%2F84Uf72BDEdL7lFq1Q2A%2BSuid%2B3nLoYDMZc0tjrYFowh0vVcvmD5fQA9wtghsBpMs%2BTZeT1H9%2F5M7ibG%2FTOyX9J9uwARGCKtNvrsb4%2FTVvasD%2BUssAiXq"}],"group":"cf-nel","max_age":604800}'
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=i8nZciayvDa7gmRkstlCT0A7qoOKeZ9B1Vi56dm7yvZwYjr000IBRGZT7CbhGk9ujQMfA6ziOk9jmpOrBZIenM%2Br%2F9Zab2Z9eOu9t7L6hGydf3lW8IdLfvRO6M%2BzHahXG4NFFd1Ztr3MguEW"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       accept-ranges:
@@ -1012,11 +1012,11 @@ interactions:
       cf-cache-status:
       - DYNAMIC
       etag:
-      - '"679ccb26-307b"'
+      - '"67a68468-306d"'
       last-modified:
-      - Fri, 31 Jan 2025 13:07:50 GMT
+      - Fri, 07 Feb 2025 22:08:40 GMT
       server-timing:
-      - cfL4;desc="?proto=TCP&rtt=21537&min_rtt=21220&rtt_var=6518&sent=5&recv=7&lost=0&retrans=0&sent_bytes=2947&recv_bytes=769&delivery_rate=179136&cwnd=252&unsent_bytes=0&cid=1cbadb73071cb04a&ts=248&x=0"
+      - cfL4;desc="?proto=TCP&rtt=29976&min_rtt=29962&rtt_var=11265&sent=5&recv=6&lost=0&retrans=0&sent_bytes=2945&recv_bytes=766&delivery_rate=134437&cwnd=252&unsent_bytes=0&cid=9fb2fcbc28db4a86&ts=249&x=0"
       strict-transport-security:
       - max-age=31557600; includeSubDomains
     status:

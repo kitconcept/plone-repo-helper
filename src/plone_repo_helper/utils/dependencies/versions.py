@@ -56,12 +56,17 @@ def get_pypi_package_versions(package: str) -> list[str]:
 
 
 @cache
-def plone_versions(min_version: str = "6.0.0") -> list[str]:
-    versions = sorted(get_pypi_package_versions("Products.CMFPlone"))
+def package_versions(package_name: str = "Products.CMFPlone") -> list[str]:
+    versions = sorted(get_pypi_package_versions(package_name))
     return versions
 
 
-def latest_plone_version() -> str | None:
-    """Latest Plone Version."""
-    versions = plone_versions()
-    return version_latest(versions)
+@cache
+def plone_versions() -> list[str]:
+    return package_versions("Products.CMFPlone")
+
+
+def latest_package_version(package_name: str) -> str | None:
+    """Latest version for base package."""
+    versions = package_versions(package_name)
+    return version_latest(versions, allow_prerelease=True)

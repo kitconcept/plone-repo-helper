@@ -34,14 +34,14 @@ def toml_parse():
 def update_pyproject():
     from plone_repo_helper.utils.dependencies import update_pyproject
 
-    def func(path: Path, version: str, constraints: list[str]) -> dict:
-        update_pyproject(path, version, constraints)
+    def func(path: Path, package: str, version: str, constraints: list[str]) -> dict:
+        update_pyproject(path, package, version, constraints)
 
     return func
 
 
 @pytest.fixture
-def test_public_project(monkeypatch, tmp_path):
+def test_public_project(monkeypatch, tmp_path) -> Path:
     src = RESOURCES / "fake_distribution"
     dst = tmp_path / "fake_distribution"
     shutil.copytree(src, dst)
@@ -50,7 +50,7 @@ def test_public_project(monkeypatch, tmp_path):
 
 
 @pytest.fixture
-def test_internal_project(monkeypatch, tmp_path):
+def test_internal_project(monkeypatch, tmp_path) -> Path:
     src = RESOURCES / "fake-project"
     dst = tmp_path / "fake-project"
     shutil.copytree(src, dst)
@@ -59,7 +59,16 @@ def test_internal_project(monkeypatch, tmp_path):
 
 
 @pytest.fixture
-def test_project_root_changelog(monkeypatch, tmp_path):
+def test_internal_project_from_distribution(monkeypatch, tmp_path) -> Path:
+    src = RESOURCES / "fake-project-from-distribution"
+    dst = tmp_path / "fake-project-from-distribution"
+    shutil.copytree(src, dst)
+    monkeypatch.chdir(dst)
+    return dst
+
+
+@pytest.fixture
+def test_project_root_changelog(monkeypatch, tmp_path) -> Path:
     src = RESOURCES / "fake-project-root-changelog"
     dst = tmp_path / "fake-project-root-changelog"
     shutil.copytree(src, dst)

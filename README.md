@@ -63,6 +63,7 @@ name = "fake.distribution"
 path = "backend"
 changelog = "backend/CHANGELOG.md"
 towncrier_settings = "backend/pyproject.toml"
+base_package = "Products.CMFPlone"
 publish = false
 
 [frontend]
@@ -150,21 +151,28 @@ This will create an `alpha` release.
 
 ## Dependencies
 
-### Plone (Products.CMFPlone)
+### Upgrade base package
 
-The following commands are available exclusively for projects based on `Products.CMFPlone` and managed by UV.
+The following commands are available exclusively for projects managed by UV and with a base_package set in the ][backend.package] section of repository.toml.
 
-#### Check version
-To check the current Plone version, run:
+#### Report the base package
+To check which is the current base package, run:
 
 ```bash
-uv run repo deps plone check
+uv run repo deps info
+```
+
+#### Check version
+To check the current base package version, run:
+
+```bash
+uv run repo deps check
 ```
 
 #### Upgrade version
 
-To upgrade `Products.CMFPlone` to a specific version, use:
+To upgrade the base package to a specific version, use:
 
 ```bash
-uv run repo deps plone upgrade 6.1.1
+uv run repo deps upgrade 6.1.1
 ```
