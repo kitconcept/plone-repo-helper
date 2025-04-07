@@ -17,6 +17,10 @@ jobs:
         - name: Install the latest version of uv
           uses: astral-sh/setup-uv@v5
           with:
+            enable-cache: true
+            cache-dependency-glob: |
+              **/pyproject.toml
+              **/uv.lock
             python-version: ${{ env.PYTHON_VERSION }}
 
         - name: Check formatting
