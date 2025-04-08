@@ -18,6 +18,10 @@ PACKAGE_CONSTRAINTS = {
         "type": "uv",
         "url": "https://raw.githubusercontent.com/kitconcept/kitconcept.intranet/refs/tags/{version}/backend/pyproject.toml",
     },
+    "portalbrasil.core": {
+        "type": "uv",
+        "url": "https://raw.githubusercontent.com/portal-br/core/refs/tags/{version}/backend/pyproject.toml",
+    },
 }
 
 
