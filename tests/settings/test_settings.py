@@ -47,6 +47,8 @@ def test_internal_project_packages(test_internal_project, bust_path_cache):
     backend = result.backend
     assert isinstance(backend, t.Package)
     assert backend.publish is False
+    assert backend.base_package == "Products.CMFPlone"
     frontend = result.frontend
     assert isinstance(frontend, t.Package)
     assert frontend.publish is False
+    assert frontend.base_package == "@plone/volto"

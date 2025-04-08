@@ -55,7 +55,10 @@ def get_next_version(settings: t.RepositorySettings) -> str:
 
 
 def _get_package_info(
-    root_path: Path, package_settings: DynaBox, version_func: Callable
+    root_path: Path,
+    package_settings: DynaBox,
+    default_base_package: str,
+    version_func: Callable,
 ) -> t.Package:
     """Return package information for the frontend."""
     path = (root_path / package_settings.path).resolve()
@@ -63,9 +66,11 @@ def _get_package_info(
     towncrier = (root_path / package_settings.towncrier_settings).resolve()
     version = version_func(path)
     publish = bool(package_settings.get("publish", True))
+    base_package = package_settings.get("base_package", default_base_package)
     return t.Package(
         name=package_settings.name,
         path=path,
+        base_package=base_package,
         version=version,
         publish=publish,
         changelog=changelog,
@@ -77,11 +82,17 @@ def get_backend(root_path: Path, raw_settings: Dynaconf) -> t.Package:
     """Return package information for the backend."""
     package_settings = raw_settings.backend.package
     version_func = versions.get_backend_version
-    return _get_package_info(root_path, package_settings, version_func)
+    default_base_package: str = "Products.CMFPlone"
+    return _get_package_info(
+        root_path, package_settings, default_base_package, version_func
+    )
 
 
 def get_frontend(root_path: Path, raw_settings: Dynaconf) -> t.Package:
     """Return package information for the frontend."""
     package_settings = raw_settings.frontend.package
     version_func = versions.get_frontend_version
-    return _get_package_info(root_path, package_settings, version_func)
+    default_base_package: str = "@plone/volto"
+    return _get_package_info(
+        root_path, package_settings, default_base_package, version_func
+    )

@@ -1,5 +1,9 @@
 from dataclasses import dataclass
+from packaging.requirements import Requirement
 from pathlib import Path
+
+
+Requirements = dict[str, Requirement]
 
 
 @dataclass
@@ -22,6 +26,7 @@ class Package:
     path: Path
     changelog: Path
     towncrier: Path
+    base_package: str
     publish: bool = True
     version: str = ""
 
